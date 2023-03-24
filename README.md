@@ -1,1 +1,1 @@
-# The Collectibles
+# Killer Sudoku Combinations

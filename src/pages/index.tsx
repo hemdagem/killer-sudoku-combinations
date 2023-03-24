@@ -48,44 +48,55 @@ const IndexPage = (data: PageProps<data>) => {
   return (
     <main>
       <NavBar></NavBar>
-      <Head title="All Desi Wear - All your desi wear needs are available here"></Head>
+      <Head title="Killer Sudoku Combinations | Featuring filters to focus on desired numbers"></Head>
       <div className="container my-4">
-        <div className="row row-cols-1 row-cols-md-3 g-4">
+        <div className="row mb-3">
           <div className="col">
-            <label htmlFor="cell-size">Cell Size</label>
-            <select
-              name="cell-size"
-              ref={cellSize}
-              onChange={(e) => SetFilterSize()}
-            >
-              <option value="0">All</option>
-              {sizes.map((size) => {
-                return (
-                  <option value={size} key={size}>
-                    {size}
-                  </option>
-                );
-              })}
-            </select>
+            <div className="form-floating">
+              <select
+                className="form-select"
+                name="cell-size"
+                ref={cellSize}
+                onChange={(e) => SetFilterSize()}
+              >
+                <option value="0">All</option>
+                {sizes.map((size) => {
+                  return (
+                    <option value={size} key={size}>
+                      {size}
+                    </option>
+                  );
+                })}
+              </select>
+              <label htmlFor="cell-size">Cell Size</label>
+            </div>
           </div>
           <div className="col">
-            <select ref={total} onChange={(e) => SetFilterSize()}>
-              <option value="0">All</option>
-              {Array(46)
-                .fill(0, 1)
-                .map((el, i) => (
-                  <option value={i} key={i}>
-                    {i}
-                  </option>
-                ))}
-            </select>
+            <div className="form-floating">
+              <select
+                className="form-select"
+                name="total"
+                ref={total}
+                onChange={(e) => SetFilterSize()}
+              >
+                <option value="0">All</option>
+                {Array(46)
+                  .fill(0, 1)
+                  .map((el, i) => (
+                    <option value={i} key={i}>
+                      {i}
+                    </option>
+                  ))}
+              </select>
+              <label htmlFor="total">Total</label>
+            </div>
           </div>
         </div>
-        <div className="row row-cols-1 row-cols-md-3 g-4">
+        <div className="row">
           <div className="col">
             {results.data.allCombinationsJson.nodes.map((item) => (
               <div>
-                <h3>{item.size}</h3>
+                <h3 className="gy-5">Cell Size {item.size}</h3>
                 <table className="table">
                   <thead>
                     <tr>
