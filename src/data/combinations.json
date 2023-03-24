@@ -1,0 +1,38 @@
+[{
+        "size": 2,
+        "combinations": [
+          { "total": 3, "combination": ["12"] },
+          { "total": 4, "combination": ["13"] },
+          { "total": 5, "combination": ["14", "23"] },
+          { "total": 6, "combination": ["15 24"] },
+          { "total": 7, "combination": ["16 25 34"] },
+          { "total": 8, "combination": ["17 26 35"] },
+          { "total": 9, "combination": ["18 27 36 45"] },
+          { "total": 10, "combination":[ "19 28 37 46"] },
+          { "total": 11, "combination":[ "29 38 47 56"] },
+          { "total": 12, "combination":[ "39 48 57"] },
+          { "total": 13, "combination":[ "49 58 67"] },
+          { "total": 14, "combination":[ "59 68"] },
+          { "total": 15, "combination":[ "69 78"] },
+          { "total": 16, "combination":[ "79"] },
+          { "total": 17, "combination":[ "89"] }
+        ]
+  },
+  {
+    "size": 3,
+    "combinations": [
+      { "total": 6, "combination": ["123"] },
+      { "total": 7, "combination": ["124"] },
+      { "total": 8, "combination": ["125 134"] },
+      { "total": 9, "combination": ["18 27 36 45"] },
+      { "total": 10, "combination":[ "19 28 37 46"] },
+      { "total": 11, "combination":[ "29 38 47 56"] },
+      { "total": 12, "combination":[ "39 48 57"] },
+      { "total": 13, "combination":[ "49 58 67"] },
+      { "total": 14, "combination":[ "59 68"] },
+      { "total": 15, "combination":[ "69 78"] },
+      { "total": 16, "combination":[ "79"] },
+      { "total": 17, "combination":[ "89"] }
+    ]
+}
+]
