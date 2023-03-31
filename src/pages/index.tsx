@@ -10,14 +10,17 @@ const IndexPage = (data: PageProps<data>) => {
 
   var cellSize = React.createRef();
   var total = React.createRef();
+  const excludedNumbers = React.useRef([]);
 
-  var allData = localStorage.getItem("combinations");
-  if (allData === null) {
-    allData = data;
-    localStorage.setItem("combinations", JSON.stringify(data));
-  } else {
-    allData = JSON.parse(allData);
-  }
+  const allData = React.useMemo(() => {
+    const savedData = localStorage.getItem("combinations");
+    if (savedData) {
+      return JSON.parse(savedData);
+    } else {
+      localStorage.setItem("combinations", JSON.stringify(data));
+      return data;
+    }
+  }, [data]);
 
   const [results, setFilteredResults] = useState(allData);
 
@@ -40,9 +43,46 @@ const IndexPage = (data: PageProps<data>) => {
         ),
       }));
 
+      const excluded = excludedNumbers.current;
+      console.log(excluded);
+      if (excluded.length > 0) {
+        cellSizeFilter.forEach((x) => {
+          x.combinations.forEach((comb, index, theArray) => {
+            var combination = theArray[index].combination[0]
+              .split(" ")
+              .filter(function (str) {
+
+                var count = 0;
+
+                excluded.forEach(element => {
+                  count += (str.indexOf(element) === -1 ? 0 : 1);
+                });
+                return count === 0;
+              })
+              .join(" ");
+  
+            if (combination.length === 0) {
+              delete theArray[index];
+              return;
+            }
+  
+            theArray[index].combination[0] = combination;
+          });
+        });
+      }
+
     tempResults.data.allCombinationsJson.nodes = cellSizeFilter;
 
     setFilteredResults(tempResults);
+  };
+
+  const handleExcludedNumbersChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    excludedNumbers.current = Array.from(e.target.selectedOptions).map(
+      (option) => parseInt(option.value, 10)
+    );
+    SetFilterSize();
   };
 
   return (
@@ -89,6 +129,25 @@ const IndexPage = (data: PageProps<data>) => {
                   ))}
               </select>
               <label htmlFor="total">Total</label>
+            </div>
+          </div>
+          <div className="col">
+            <div className="form-floating">
+              <select
+                className="form-select"
+                id="exclude-numbers"
+                onChange={(e) => handleExcludedNumbersChange(e)}
+                multiple
+              >
+                {Array(9)
+                  .fill(0, 1)
+                  .map((el, i) => (
+                    <option value={i + 1} key={i}>
+                      {i + 1}
+                    </option>
+                  ))}
+              </select>
+              <label htmlFor="exclude-numbers">Exclude Numbers</label>
             </div>
           </div>
         </div>
