@@ -12,21 +12,24 @@ const IndexPage = (data: PageProps<data>) => {
   var total = React.createRef();
   const excludedNumbers = React.useRef([]);
 
+  const getCombinations = () => typeof window !== 'undefined' ? localStorage.getItem("combinations") : "";
+
   const allData = React.useMemo(() => {
-    const savedData = localStorage.getItem("combinations");
+    if (typeof window !== 'undefined') {
+    const savedData = getCombinations();
     if (savedData) {
       return JSON.parse(savedData);
     } else {
       localStorage.setItem("combinations", JSON.stringify(data));
       return data;
     }
+  }
   }, [data]);
 
   const [results, setFilteredResults] = useState(allData);
 
   const SetFilterSize = () => {
-    let tempResults = JSON.parse(
-      localStorage.getItem("combinations")
+    let tempResults = JSON.parse(getCombinations()
     ) as PageProps<data>;
     let cellSizeNumber = Number.parseInt(cellSize.current.value);
     let totalNumber = Number.parseInt(total.current.value);
