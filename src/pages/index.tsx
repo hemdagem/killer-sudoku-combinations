@@ -12,25 +12,25 @@ const IndexPage = (data: PageProps<data>) => {
   var total = React.createRef();
   const excludedNumbers = React.useRef([]);
 
-  const getCombinations = () => typeof window !== 'undefined' ? localStorage.getItem("combinations") : "";
+  const getCombinations = () =>
+    typeof window !== "undefined" ? localStorage.getItem("combinations") : "";
 
   const allData = React.useMemo(() => {
-    if (typeof window !== 'undefined') {
     const savedData = getCombinations();
     if (savedData) {
       return JSON.parse(savedData);
     } else {
-      localStorage.setItem("combinations", JSON.stringify(data));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("combinations", JSON.stringify(data));
+      }
       return data;
     }
-  }
   }, [data]);
 
   const [results, setFilteredResults] = useState(allData);
 
   const SetFilterSize = () => {
-    let tempResults = JSON.parse(getCombinations()
-    ) as PageProps<data>;
+    let tempResults = JSON.parse(getCombinations()) as PageProps<data>;
     let cellSizeNumber = Number.parseInt(cellSize.current.value);
     let totalNumber = Number.parseInt(total.current.value);
 
@@ -46,33 +46,32 @@ const IndexPage = (data: PageProps<data>) => {
         ),
       }));
 
-      const excluded = excludedNumbers.current;
-      console.log(excluded);
-      if (excluded.length > 0) {
-        cellSizeFilter.forEach((x) => {
-          x.combinations.forEach((comb, index, theArray) => {
-            var combination = theArray[index].combination[0]
-              .split(" ")
-              .filter(function (str) {
+    const excluded = excludedNumbers.current;
+    console.log(excluded);
+    if (excluded.length > 0) {
+      cellSizeFilter.forEach((x) => {
+        x.combinations.forEach((comb, index, theArray) => {
+          var combination = theArray[index].combination[0]
+            .split(" ")
+            .filter(function (str) {
+              var count = 0;
 
-                var count = 0;
+              excluded.forEach((element) => {
+                count += str.indexOf(element) === -1 ? 0 : 1;
+              });
+              return count === 0;
+            })
+            .join(" ");
 
-                excluded.forEach(element => {
-                  count += (str.indexOf(element) === -1 ? 0 : 1);
-                });
-                return count === 0;
-              })
-              .join(" ");
-  
-            if (combination.length === 0) {
-              delete theArray[index];
-              return;
-            }
-  
-            theArray[index].combination[0] = combination;
-          });
+          if (combination.length === 0) {
+            delete theArray[index];
+            return;
+          }
+
+          theArray[index].combination[0] = combination;
         });
-      }
+      });
+    }
 
     tempResults.data.allCombinationsJson.nodes = cellSizeFilter;
 
