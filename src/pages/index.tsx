@@ -4,35 +4,40 @@ import Head from "../components/Head";
 import { data, Nodes } from "../models/Types";
 import { graphql, PageProps } from "gatsby";
 import { useState } from "react";
+import CreatableSelect from "react-select/creatable";
+import { ActionMeta } from "react-select";
+import Select from "react-select";
 
 const IndexPage = (data: PageProps<data>) => {
-  const sizes = [2, 3, 4, 5, 6, 7, 8, 9];
-
-  var cellSize = React.createRef();
-  var total = React.createRef();
+  var cellSize = React.useRef();
+  var total = React.useRef();
   const excludedNumbers = React.useRef([]);
 
-  const getCombinations = () =>
-    typeof window !== "undefined" ? localStorage.getItem("combinations") : "";
+  const getCombinations = (key: string) =>
+    typeof window !== "undefined" ? localStorage.getItem(key) : "";
+
+  const setCombinations = (key: string, data: PageProps<data>) =>
+    typeof window !== "undefined"
+      ? localStorage.setItem(key, JSON.stringify(data))
+      : "";
 
   const allData = React.useMemo(() => {
-    const savedData = getCombinations();
+    const savedData = getCombinations("combinations");
     if (savedData) {
       return JSON.parse(savedData);
-    } else {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("combinations", JSON.stringify(data));
-      }
-      return data;
     }
+    setCombinations("combinations", data);
+    return data;
   }, [data]);
 
   const [results, setFilteredResults] = useState(allData);
 
   const SetFilterSize = () => {
-    let tempResults = JSON.parse(getCombinations()) as PageProps<data>;
-    let cellSizeNumber = Number.parseInt(cellSize.current.value);
-    let totalNumber = Number.parseInt(total.current.value);
+    let tempResults = JSON.parse(
+      getCombinations("combinations")
+    ) as PageProps<data>;
+    let cellSizeNumber = Number.parseInt(cellSize.current)  ??0;
+    let totalNumber = Number.parseInt(total.current)  ?? 0;
 
     var cellSizeFilter = tempResults.data.allCombinationsJson.nodes
       .filter(
@@ -78,12 +83,28 @@ const IndexPage = (data: PageProps<data>) => {
     setFilteredResults(tempResults);
   };
 
-  const handleExcludedNumbersChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
+  const onChange = (
+    options: readonly Option[],
+    actionMeta: ActionMeta<Option>
   ) => {
-    excludedNumbers.current = Array.from(e.target.selectedOptions).map(
-      (option) => parseInt(option.value, 10)
-    );
+    switch (actionMeta.name) {
+      case "excluded-numbers":
+        excludedNumbers.current = Array.from(options).map((option) =>
+          parseInt(option.value, 10)
+        );
+        break;
+      case "cell-size":
+        cellSize.current = Array.from(options).map((option) =>
+          parseInt(option.value, 10)
+        );
+        break;
+      case "total":
+        total.current = Array.from(options).map((option) =>
+          parseInt(option.value, 10)
+        );
+        break;
+    }
+
     SetFilterSize();
   };
 
@@ -95,61 +116,41 @@ const IndexPage = (data: PageProps<data>) => {
         <div className="row mb-3">
           <div className="col">
             <div className="form-floating">
-              <select
-                className="form-select"
-                name="cell-size"
+              <Select
+                options={Array(10)
+                  .fill(0, 1)
+                  .map((el, i) => ({ value: i === 1? 0 : i, label: i===1? "All" : i.toString() }))}
+                placeholder="Cell Size"
+                onChange={(e, i) => onChange(Array(e), i)}
                 ref={cellSize}
-                onChange={(e) => SetFilterSize()}
-              >
-                <option value="0">All</option>
-                {sizes.map((size) => {
-                  return (
-                    <option value={size} key={size}>
-                      {size}
-                    </option>
-                  );
-                })}
-              </select>
-              <label htmlFor="cell-size">Cell Size</label>
+                name="cell-size"
+              />
             </div>
           </div>
           <div className="col">
             <div className="form-floating">
-              <select
-                className="form-select"
-                name="total"
+              <Select
+                options={Array(46)
+                  .fill(0, 0)
+                  .map((el, i) => ({ value: i === 0? 0 : i, label: i===0? "All" : i.toString() }))}
+                placeholder="Total"
+                onChange={(e, i) => onChange(Array(e), i)}
                 ref={total}
-                onChange={(e) => SetFilterSize()}
-              >
-                <option value="0">All</option>
-                {Array(46)
-                  .fill(0, 1)
-                  .map((el, i) => (
-                    <option value={i} key={i}>
-                      {i}
-                    </option>
-                  ))}
-              </select>
-              <label htmlFor="total">Total</label>
+                name="total"
+              />
             </div>
           </div>
           <div className="col">
             <div className="form-floating">
-              <select
-                className="form-select"
-                id="exclude-numbers"
-                onChange={(e) => handleExcludedNumbersChange(e)}
-                multiple
-              >
-                {Array(10)
-                  .fill(0, 1)
-                  .map((el, i) => (
-                    <option value={i} key={i}>
-                      {i}
-                    </option>
-                  ))}
-              </select>
-              <label htmlFor="exclude-numbers">Exclude Numbers</label>
+              <CreatableSelect
+                name="excluded-numbers"
+                placeholder="Exclude Numbers"
+                options={Array(10)
+                  .fill(0, 2)
+                  .map((el, i) => ({ value: i, label: i }))}
+                isMulti={true}
+                onChange={(e, i) => onChange(e, i)}
+              />
             </div>
           </div>
         </div>

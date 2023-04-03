@@ -36,6 +36,7 @@
     "react-helmet": "^6.1.0",
     "react-lazy-load-image-component": "^1.5.5",
     "react-router-dom": "^6.3.0",
+    "react-select": "^5.7.2",
     "react-use-flexsearch": "^0.1.1",
     "ts-node": "^10.7.0"
   },
