@@ -141,11 +141,11 @@ const IndexPage = (data: PageProps<data>) => {
                 onChange={(e) => handleExcludedNumbersChange(e)}
                 multiple
               >
-                {Array(9)
+                {Array(10)
                   .fill(0, 1)
                   .map((el, i) => (
-                    <option value={i + 1} key={i}>
-                      {i + 1}
+                    <option value={i} key={i}>
+                      {i}
                     </option>
                   ))}
               </select>
