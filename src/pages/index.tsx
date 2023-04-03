@@ -37,7 +37,10 @@ const IndexPage = (data: PageProps<data>) => {
       getCombinations("combinations")
     ) as PageProps<data>;
     let cellSizeNumber = Number.parseInt(cellSize.current)  ??0;
-    let totalNumber = Number.parseInt(total.current)  ?? 0;
+    let totalNumber = Number.parseInt(total.current);
+    if(Number.isNaN(totalNumber)) {
+      totalNumber =0;
+    }
 
     var cellSizeFilter = tempResults.data.allCombinationsJson.nodes
       .filter(
@@ -137,6 +140,7 @@ const IndexPage = (data: PageProps<data>) => {
                 onChange={(e, i) => onChange(Array(e), i)}
                 ref={total}
                 name="total"
+                defaultValue={{ label: "All", value: 0 }}
               />
             </div>
           </div>
