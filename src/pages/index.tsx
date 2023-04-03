@@ -36,10 +36,13 @@ const IndexPage = (data: PageProps<data>) => {
     let tempResults = JSON.parse(
       getCombinations("combinations")
     ) as PageProps<data>;
-    let cellSizeNumber = Number.parseInt(cellSize.current)  ??0;
+    let cellSizeNumber = Number.parseInt(cellSize.current) ?? 0;
     let totalNumber = Number.parseInt(total.current);
-    if(Number.isNaN(totalNumber)) {
-      totalNumber =0;
+    if (Number.isNaN(totalNumber)) {
+      totalNumber = 0;
+    }
+    if (Number.isNaN(cellSizeNumber)) {
+      cellSizeNumber = 0;
     }
 
     var cellSizeFilter = tempResults.data.allCombinationsJson.nodes
@@ -122,7 +125,10 @@ const IndexPage = (data: PageProps<data>) => {
               <Select
                 options={Array(10)
                   .fill(0, 1)
-                  .map((el, i) => ({ value: i === 1? 0 : i, label: i===1? "All" : i.toString() }))}
+                  .map((el, i) => ({
+                    value: i === 1 ? 0 : i,
+                    label: i === 1 ? "All" : i.toString(),
+                  }))}
                 placeholder="Cell Size"
                 onChange={(e, i) => onChange(Array(e), i)}
                 ref={cellSize}
@@ -135,7 +141,10 @@ const IndexPage = (data: PageProps<data>) => {
               <Select
                 options={Array(46)
                   .fill(0, 0)
-                  .map((el, i) => ({ value: i === 0? 0 : i, label: i===0? "All" : i.toString() }))}
+                  .map((el, i) => ({
+                    value: i === 0 ? 0 : i,
+                    label: i === 0 ? "All" : i.toString(),
+                  }))}
                 placeholder="Total"
                 onChange={(e, i) => onChange(Array(e), i)}
                 ref={total}
@@ -161,7 +170,7 @@ const IndexPage = (data: PageProps<data>) => {
         <div className="row">
           <div className="col">
             {results.data.allCombinationsJson.nodes.map((item) => (
-              <div>
+              <div key={item.size}>
                 <h3 className="gy-5">Cell Size {item.size}</h3>
                 <table className="table">
                   <thead>
@@ -170,15 +179,15 @@ const IndexPage = (data: PageProps<data>) => {
                       <th scope="col">Combinations</th>
                     </tr>
                   </thead>
-
+                  <tbody>
                   {item.combinations.map((row) => (
-                    <tbody>
+                    
                       <tr key={row.total}>
                         <td>{row.total}</td>
                         <td>{row.combination}</td>
                       </tr>
-                    </tbody>
                   ))}
+                  </tbody>
                 </table>
               </div>
             ))}
