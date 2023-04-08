@@ -159,7 +159,7 @@ const IndexPage = (data: PageProps<data>) => {
                 name="excluded-numbers"
                 placeholder="Exclude Numbers"
                 options={Array(10)
-                  .fill(0, 2)
+                  .fill(0, 1)
                   .map((el, i) => ({ value: i, label: i }))}
                 isMulti={true}
                 onChange={(e, i) => onChange(e, i)}
