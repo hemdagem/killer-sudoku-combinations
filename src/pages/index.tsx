@@ -186,6 +186,8 @@ const IndexPage = (data: PageProps<data>) => {
               />
             </div>
           </div>
+        </div>
+        <div className="row mb-3">
           <div className="col">
             <div className="form-floating">
               <CreatableSelect
