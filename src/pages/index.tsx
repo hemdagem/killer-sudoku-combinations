@@ -12,6 +12,7 @@ const IndexPage = (data: PageProps<data>) => {
   var cellSize = React.useRef();
   var total = React.useRef();
   const excludedNumbers = React.useRef([]);
+  const includedNumbers = React.useRef([]);
 
   const getCombinations = (key: string) =>
     typeof window !== "undefined" ? localStorage.getItem(key) : "";
@@ -64,11 +65,38 @@ const IndexPage = (data: PageProps<data>) => {
         x.combinations.forEach((comb, index, theArray) => {
           var combination = theArray[index].combination[0]
             .split(" ")
-            .filter(function (str) {
+            .filter(function (str: string) {
               var count = 0;
 
               excluded.forEach((element) => {
                 count += str.indexOf(element) === -1 ? 0 : 1;
+              });
+              return count === 0;
+            })
+            .join(" ");
+
+          if (combination.length === 0) {
+            delete theArray[index];
+            return;
+          }
+
+          theArray[index].combination[0] = combination;
+        });
+      });
+    }
+
+    const included = includedNumbers.current;
+    console.log(included);
+    if (included.length > 0) {
+      cellSizeFilter.forEach((x) => {
+        x.combinations.forEach((comb, index, theArray) => {
+          var combination = theArray[index].combination[0]
+            .split(" ")
+            .filter(function (str: string) {
+              var count = 0;
+
+              included.forEach((element) => {
+                count += str.indexOf(element) === -1 ? 1 : 0;
               });
               return count === 0;
             })
@@ -106,6 +134,11 @@ const IndexPage = (data: PageProps<data>) => {
         break;
       case "total":
         total.current = Array.from(options).map((option) =>
+          parseInt(option.value, 10)
+        );
+        break;
+      case "included-numbers":
+        includedNumbers.current = Array.from(options).map((option) =>
           parseInt(option.value, 10)
         );
         break;
@@ -166,6 +199,19 @@ const IndexPage = (data: PageProps<data>) => {
               />
             </div>
           </div>
+          <div className="col">
+            <div className="form-floating">
+              <CreatableSelect
+                name="included-numbers"
+                placeholder="Include Numbers"
+                options={Array(10)
+                  .fill(0, 1)
+                  .map((el, i) => ({ value: i, label: i }))}
+                isMulti={true}
+                onChange={(e, i) => onChange(e, i)}
+              />
+            </div>
+          </div>
         </div>
         <div className="row">
           <div className="col">
@@ -180,13 +226,12 @@ const IndexPage = (data: PageProps<data>) => {
                     </tr>
                   </thead>
                   <tbody>
-                  {item.combinations.map((row) => (
-                    
+                    {item.combinations.map((row) => (
                       <tr key={row.total}>
                         <td>{row.total}</td>
                         <td>{row.combination}</td>
                       </tr>
-                  ))}
+                    ))}
                   </tbody>
                 </table>
               </div>
