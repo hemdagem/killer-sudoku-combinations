@@ -1,14 +1,18 @@
 import * as React from "react";
 import NavBar from "../components/NavBar";
 import Head from "../components/Head";
-import { data, Nodes } from "../models/Types";
+import { data } from "../models/Types";
 import { graphql, PageProps } from "gatsby";
 import { useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta } from "react-select";
 import Select from "react-select";
-import {IOptionStrategy,ExcludedNumbersStrategy, CellSizeStrategy, TotalStrategy, IncludedNumbersStrategy} from "../domain/OptionStrategy";
-import { LocalStorage } from "../domain/Storage";
+import { IncludedNumbersStrategy } from "../domain/IncludedNumbersStrategy";
+import { TotalStrategy } from "../domain/TotalStrategy";
+import { CellSizeStrategy } from "../domain/CellSizeStrategy";
+import { ExcludedNumbersStrategy } from "../domain/ExcludedNumbersStrategy";
+import { IOptionStrategy } from "../domain/IOptionStrategy";
+import { LocalStorage } from "../domain/LocalStorage";
 
 const excludedNumbersStrategy = new ExcludedNumbersStrategy();
 const totalStrategy = new TotalStrategy();
@@ -41,7 +45,6 @@ const IndexPage = (data: PageProps<data>) => {
     let tempResults = JSON.parse(localStorage.getCombinations("combinations")) as PageProps<data>;
 
     var cellSizeFilter = tempResults.data.allCombinationsJson.nodes;
-    console.log(cellSizeStrategy.getValue()[0]);
 
     for(let prop in optionStrategies) {
       cellSizeFilter = optionStrategies[prop].filter(cellSizeFilter)
@@ -75,12 +78,7 @@ const IndexPage = (data: PageProps<data>) => {
           <div className="col">
             <div className="form-floating">
               <Select
-                options={Array(10)
-                  .fill(0, 1)
-                  .map((el, i) => ({
-                    value: i === 1 ? 0 : i,
-                    label: i === 1 ? "All" : i.toString(),
-                  }))}
+                options={cellSizeStrategy.options()}
                 placeholder="Cell Size"
                 onChange={(e, i) => onChange(Array(e), i)}
                 name="cell-size"
@@ -90,12 +88,7 @@ const IndexPage = (data: PageProps<data>) => {
           <div className="col">
             <div className="form-floating">
               <Select
-                options={Array(46)
-                  .fill(0, 0)
-                  .map((el, i) => ({
-                    value: i === 0 ? 0 : i,
-                    label: i === 0 ? "All" : i.toString(),
-                  }))}
+                options={totalStrategy.options()}
                 placeholder="Total"
                 onChange={(e, i) => onChange(Array(e), i)}
                 name="total"
@@ -110,9 +103,7 @@ const IndexPage = (data: PageProps<data>) => {
               <CreatableSelect
                 name="excluded-numbers"
                 placeholder="Exclude Numbers"
-                options={Array(10)
-                  .fill(0, 1)
-                  .map((el, i) => ({ value: i, label: i }))}
+                options={excludedNumbersStrategy.options()}
                 isMulti={true}
                 onChange={(e, i) => onChange(e, i)}
               />
@@ -123,9 +114,7 @@ const IndexPage = (data: PageProps<data>) => {
               <CreatableSelect
                 name="included-numbers"
                 placeholder="Include Numbers"
-                options={Array(10)
-                  .fill(0, 1)
-                  .map((el, i) => ({ value: i, label: i }))}
+                options={includedNumbersStrategy.options()}
                 isMulti={true}
                 onChange={(e, i) => onChange(e, i)}
               />
