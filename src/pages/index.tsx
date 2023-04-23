@@ -7,12 +7,22 @@ import { useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta } from "react-select";
 import Select from "react-select";
+import {IOptionStrategy,ExcludedNumbersStrategy, CellSizeStrategy, TotalStrategy, IncludedNumbersStrategy} from "../domain/OptionStrategy";
+
+
+const excludedNumbersStrategy = new ExcludedNumbersStrategy();
+const totalStrategy = new TotalStrategy();
+const includedNumbersStrategy = new IncludedNumbersStrategy();
+const cellSizeStrategy = new CellSizeStrategy();
+
+const optionStrategies: Record<string, IOptionStrategy> = {
+  "excluded-numbers": excludedNumbersStrategy,
+  "cell-size": cellSizeStrategy,
+  "total": totalStrategy,
+  "included-numbers": includedNumbersStrategy,
+};
 
 const IndexPage = (data: PageProps<data>) => {
-  var cellSize = React.useRef();
-  var total = React.useRef();
-  const excludedNumbers = React.useRef([]);
-  const includedNumbers = React.useRef([]);
 
   const getCombinations = (key: string) =>
     typeof window !== "undefined" ? localStorage.getItem(key) : "";
@@ -32,33 +42,28 @@ const IndexPage = (data: PageProps<data>) => {
   }, [data]);
 
   const [results, setFilteredResults] = useState(allData);
+ 
 
   const SetFilterSize = () => {
     let tempResults = JSON.parse(
       getCombinations("combinations")
     ) as PageProps<data>;
-    let cellSizeNumber = Number.parseInt(cellSize.current) ?? 0;
-    let totalNumber = Number.parseInt(total.current);
-    if (Number.isNaN(totalNumber)) {
-      totalNumber = 0;
-    }
-    if (Number.isNaN(cellSizeNumber)) {
-      cellSizeNumber = 0;
-    }
+
+    console.log(cellSizeStrategy.getValue()[0]);
 
     var cellSizeFilter = tempResults.data.allCombinationsJson.nodes
       .filter(
         (result: Nodes) =>
-          cellSizeNumber === 0 || result.size === cellSizeNumber
+        cellSizeStrategy.getValue()[0] === 0 || result.size === cellSizeStrategy.getValue()[0]
       )
       .map((item) => ({
         ...item,
         combinations: item.combinations.filter(
-          (comb) => totalNumber === 0 || comb.total === totalNumber
+          (comb) => totalStrategy.getValue()[0] === 0 || comb.total === totalStrategy.getValue()[0]
         ),
       }));
 
-    const excluded = excludedNumbers.current;
+    const excluded = excludedNumbersStrategy.getValue();
     console.log(excluded);
     if (excluded.length > 0) {
       cellSizeFilter.forEach((x) => {
@@ -85,7 +90,7 @@ const IndexPage = (data: PageProps<data>) => {
       });
     }
 
-    const included = includedNumbers.current;
+    const included = includedNumbersStrategy.getValue();
     console.log(included);
     if (included.length > 0) {
       cellSizeFilter.forEach((x) => {
@@ -121,29 +126,13 @@ const IndexPage = (data: PageProps<data>) => {
     options: readonly Option[],
     actionMeta: ActionMeta<Option>
   ) => {
-    switch (actionMeta.name) {
-      case "excluded-numbers":
-        excludedNumbers.current = Array.from(options).map((option) =>
-          parseInt(option.value, 10)
-        );
-        break;
-      case "cell-size":
-        cellSize.current = Array.from(options).map((option) =>
-          parseInt(option.value, 10)
-        );
-        break;
-      case "total":
-        total.current = Array.from(options).map((option) =>
-          parseInt(option.value, 10)
-        );
-        break;
-      case "included-numbers":
-        includedNumbers.current = Array.from(options).map((option) =>
-          parseInt(option.value, 10)
-        );
-        break;
+    const strategy = optionStrategies[actionMeta.name];
+    if (strategy) {
+      strategy.setValue(Array.from(options).map((option) =>
+        parseInt(option.value, 10)
+      ));
     }
-
+  
     SetFilterSize();
   };
 
@@ -164,7 +153,6 @@ const IndexPage = (data: PageProps<data>) => {
                   }))}
                 placeholder="Cell Size"
                 onChange={(e, i) => onChange(Array(e), i)}
-                ref={cellSize}
                 name="cell-size"
               />
             </div>
@@ -180,7 +168,6 @@ const IndexPage = (data: PageProps<data>) => {
                   }))}
                 placeholder="Total"
                 onChange={(e, i) => onChange(Array(e), i)}
-                ref={total}
                 name="total"
                 defaultValue={{ label: "All", value: 0 }}
               />
