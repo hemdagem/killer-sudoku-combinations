@@ -40,72 +40,11 @@ const IndexPage = (data: PageProps<data>) => {
   const SetFilterSize = () => {
     let tempResults = JSON.parse(localStorage.getCombinations("combinations")) as PageProps<data>;
 
+    var cellSizeFilter = tempResults.data.allCombinationsJson.nodes;
     console.log(cellSizeStrategy.getValue()[0]);
 
-    var cellSizeFilter = tempResults.data.allCombinationsJson.nodes
-      .filter(
-        (result: Nodes) =>
-        cellSizeStrategy.getValue()[0] === 0 || result.size === cellSizeStrategy.getValue()[0]
-      )
-      .map((item) => ({
-        ...item,
-        combinations: item.combinations.filter(
-          (comb) => totalStrategy.getValue()[0] === 0 || comb.total === totalStrategy.getValue()[0]
-        ),
-      }));
-
-    const excluded = excludedNumbersStrategy.getValue();
-    console.log(excluded);
-    if (excluded.length > 0) {
-      cellSizeFilter.forEach((x) => {
-        x.combinations.forEach((comb, index, theArray) => {
-          var combination = theArray[index].combination[0]
-            .split(" ")
-            .filter(function (str: string) {
-              var count = 0;
-
-              excluded.forEach((element) => {
-                count += str.indexOf(element) === -1 ? 0 : 1;
-              });
-              return count === 0;
-            })
-            .join(" ");
-
-          if (combination.length === 0) {
-            delete theArray[index];
-            return;
-          }
-
-          theArray[index].combination[0] = combination;
-        });
-      });
-    }
-
-    const included = includedNumbersStrategy.getValue();
-    console.log(included);
-    if (included.length > 0) {
-      cellSizeFilter.forEach((x) => {
-        x.combinations.forEach((comb, index, theArray) => {
-          var combination = theArray[index].combination[0]
-            .split(" ")
-            .filter(function (str: string) {
-              var count = 0;
-
-              included.forEach((element) => {
-                count += str.indexOf(element) === -1 ? 1 : 0;
-              });
-              return count === 0;
-            })
-            .join(" ");
-
-          if (combination.length === 0) {
-            delete theArray[index];
-            return;
-          }
-
-          theArray[index].combination[0] = combination;
-        });
-      });
+    for(let prop in optionStrategies) {
+      cellSizeFilter = optionStrategies[prop].filter(cellSizeFilter)
     }
 
     tempResults.data.allCombinationsJson.nodes = cellSizeFilter;
