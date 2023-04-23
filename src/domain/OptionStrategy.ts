@@ -20,7 +20,7 @@ export class ExcludedNumbersStrategy implements IOptionStrategy {
 export class CellSizeStrategy implements IOptionStrategy {
   constructor() {  }
 
-  private cellSize = 1;
+  private cellSize = 0;
 
   setValue = (value: number[]) => {
     this.cellSize = value[0] ?? 0;

@@ -8,12 +8,13 @@ import CreatableSelect from "react-select/creatable";
 import { ActionMeta } from "react-select";
 import Select from "react-select";
 import {IOptionStrategy,ExcludedNumbersStrategy, CellSizeStrategy, TotalStrategy, IncludedNumbersStrategy} from "../domain/OptionStrategy";
-
+import { LocalStorage } from "../domain/Storage";
 
 const excludedNumbersStrategy = new ExcludedNumbersStrategy();
 const totalStrategy = new TotalStrategy();
 const includedNumbersStrategy = new IncludedNumbersStrategy();
 const cellSizeStrategy = new CellSizeStrategy();
+const localStorage = new LocalStorage();
 
 const optionStrategies: Record<string, IOptionStrategy> = {
   "excluded-numbers": excludedNumbersStrategy,
@@ -24,20 +25,12 @@ const optionStrategies: Record<string, IOptionStrategy> = {
 
 const IndexPage = (data: PageProps<data>) => {
 
-  const getCombinations = (key: string) =>
-    typeof window !== "undefined" ? localStorage.getItem(key) : "";
-
-  const setCombinations = (key: string, data: PageProps<data>) =>
-    typeof window !== "undefined"
-      ? localStorage.setItem(key, JSON.stringify(data))
-      : "";
-
   const allData = React.useMemo(() => {
-    const savedData = getCombinations("combinations");
+    const savedData = localStorage.getCombinations("combinations");
     if (savedData) {
       return JSON.parse(savedData);
     }
-    setCombinations("combinations", data);
+    localStorage.setCombinations("combinations", JSON.stringify(data));
     return data;
   }, [data]);
 
@@ -45,9 +38,7 @@ const IndexPage = (data: PageProps<data>) => {
  
 
   const SetFilterSize = () => {
-    let tempResults = JSON.parse(
-      getCombinations("combinations")
-    ) as PageProps<data>;
+    let tempResults = JSON.parse(localStorage.getCombinations("combinations")) as PageProps<data>;
 
     console.log(cellSizeStrategy.getValue()[0]);
 
