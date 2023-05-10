@@ -5,7 +5,7 @@ import { IOptionStrategy } from "./IOptionStrategy";
 export class ExcludedNumbersStrategy implements IOptionStrategy {
   constructor() { }
 
-  private excludedNumbers = [];
+  private excludedNumbers = [] as number[];
 
   setValue = (value: number[]) => {
     this.excludedNumbers = value;

@@ -34,23 +34,23 @@ const IndexPage = (data: PageProps<data>) => {
     if (savedData) {
       return JSON.parse(savedData);
     }
-    localStorage.setCombinations("combinations", JSON.stringify(data));
-    return data;
-  }, [data]);
+    localStorage.setCombinations("combinations", JSON.stringify(data.data));
+    return data.data;
+  }, [data.data]) as data;
 
   const [results, setFilteredResults] = useState(allData);
  
 
   const SetFilterSize = () => {
-    let tempResults = JSON.parse(localStorage.getCombinations("combinations")) as PageProps<data>;
+    let tempResults = JSON.parse(localStorage.getCombinations("combinations")) as data;
 
-    var cellSizeFilter = tempResults.data.allCombinationsJson.nodes;
+    var cellSizeFilter = tempResults.allCombinationsJson.nodes;
 
     for(let prop in optionStrategies) {
       cellSizeFilter = optionStrategies[prop].filter(cellSizeFilter)
     }
 
-    tempResults.data.allCombinationsJson.nodes = cellSizeFilter;
+    tempResults.allCombinationsJson.nodes = cellSizeFilter;
 
     setFilteredResults(tempResults);
   };
@@ -123,7 +123,7 @@ const IndexPage = (data: PageProps<data>) => {
         </div>
         <div className="row">
           <div className="col">
-            {results.data.allCombinationsJson.nodes.map((item) => (
+            {results.allCombinationsJson.nodes.map((item) => (
               <div key={item.size}>
                 <h3 className="gy-5">Cell Size {item.size}</h3>
                 <table className="table">
