@@ -18,16 +18,12 @@
   },
   "dependencies": {
     "gatsby": "^5.9.1",
-    "gatsby-image": "^3.11.0",
     "gatsby-plugin-manifest": "^5.9.0",
     "gatsby-plugin-offline": "^6.9.0",
-    "gatsby-plugin-sharp": "^5.9.0",
     "gatsby-source-filesystem": "^5.9.0",
     "gatsby-transformer-json": "^5.9.0",
-    "gatsby-transformer-sharp": "^5.9.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-helmet": "^6.1.0",
     "react-router-dom": "^6.3.0",
     "react-select": "^5.7.2",
     "ts-node": "^10.7.0"

@@ -5,12 +5,7 @@ const config: GatsbyConfig = {
     title: ``,
     siteUrl: `https://www.yourdomain.tld`,
   },
-  plugins: ["gatsby-plugin-sharp", {
-    resolve: 'gatsby-plugin-manifest',
-    options: {
-      "icon": "src/images/icon.png"
-    }
-  },
+  plugins: [
   {
     resolve: `gatsby-plugin-manifest`,
     options: {
