@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import * as React from "react";
 
 type HeadProps = {
@@ -7,7 +6,7 @@ type HeadProps = {
 
 const Head = (props : HeadProps) => {
   return (
-    <Helmet>
+    <>
       <title> Killer Sudoku Combinations</title>
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -21,7 +20,7 @@ const Head = (props : HeadProps) => {
         crossOrigin="anonymous"
         defer
       ></script>
-    </Helmet>
+      </>
   );
 };
 
